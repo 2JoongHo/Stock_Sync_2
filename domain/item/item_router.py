@@ -1,6 +1,6 @@
 """품목(Item) 도메인의 HTTP 엔드포인트 라우팅 모듈"""
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -24,6 +24,17 @@ def item_list(db: Session = Depends(get_db)):
             response_model=item_schema.Item,
             )
 def item_create(_item_create: item_schema.ItemCreate, db: Session = Depends(get_db)):
-    """신규 품목을 등록하고 생성된 품목 정보 반환"""
+    """신규 품목을 등록하고 생성된 품목 정보 반환
+    이미 존재 할 경우 409 에러 반환"""
+    # 1. 이미 존재하는지 확인
+    existing_item = item_crud.get_item_by_code(
+        db, item_code=_item_create.item_code
+    )
+    if existing_item:
+        raise HTTPException(
+            status_code = status.HTTP_409_CONFLICT,
+            detail = f"이미 존재하는 제품 코드입니다: {_item_create.item_code}"
+        )
+    # 2. 중복이 아닐 시 정상적으로 생성
     item = item_crud.create_item(db=db, item_create=_item_create)
     return item

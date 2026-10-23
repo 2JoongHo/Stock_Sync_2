@@ -8,6 +8,10 @@ def get_item_list(db: Session):
     """전체 품목 목록을 최신 등록일 순으로 조회"""
     return db.query(models.Item).order_by(models.Item.created_at.desc()).all()
 
+def get_item_by_code(db: Session, item_code: str) -> models.Item | None:
+    """품목 코드(item_code)로 품목을 조회"""
+    return (db.query(models.Item).filter(models.Item.item_code == item_code).first())
+
 def create_item(db: Session, item_create: item_schema.ItemCreate) -> models.Item:
     """검증 된 품목 데이터를 바탕으로 신규 레코드를 생성하고 DB에 영구 반영"""
     db_item = models.Item(
