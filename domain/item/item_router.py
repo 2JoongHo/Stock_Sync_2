@@ -38,3 +38,17 @@ def item_create(_item_create: item_schema.ItemCreate, db: Session = Depends(get_
     # 2. 중복이 아닐 시 정상적으로 생성
     item = item_crud.create_item(db=db, item_create=_item_create)
     return item
+
+@router.get("/{item_id}",
+            response_model=item_schema.Item)
+def item_detail(item_id: int,
+                db: Session = Depends(get_db)):
+    """품목 ID로 품목 정보 조회
+    없을 시 404 에러 반환"""
+    item = item_crud.get_item(db, item_id=item_id)
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"해당 ID의 품목을 찾을 수 없습니다: {item_id}"
+        )
+    return item
