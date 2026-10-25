@@ -43,7 +43,7 @@ def item_create(_item_create: item_schema.ItemCreate, db: Session = Depends(get_
             response_model=item_schema.Item)
 def item_detail(item_id: int,
                 db: Session = Depends(get_db)):
-    """품목 ID로 품목 정보 조회
+    """ID로 개별 품목 정보 조회
     없을 시 404 에러 반환"""
     item = item_crud.get_item(db, item_id=item_id)
     if not item:

@@ -9,7 +9,7 @@ def get_item_list(db: Session):
     return db.query(models.Item).order_by(models.Item.created_at.desc()).all()
 
 def get_item(db: Session, item_id: int) -> models.Item | None:
-    """ID로 품목 조회"""
+    """ID로 개별 품목 조회"""
     return db.query(models.Item).filter(models.Item.id == item_id).first()
 
 def get_item_by_code(db: Session, item_code: str) -> models.Item | None:
