@@ -31,7 +31,7 @@ def create_item(db: Session, item_create: item_schema.ItemCreate) -> models.Item
     db.refresh(db_item)
     return db_item
 
-def update(db: Session, db_item: models.Item, item_update: item_schema.ItemUpdate) -> models.Item:
+def update_item(db: Session, db_item: models.Item, item_update: item_schema.ItemUpdate) -> models.Item:
     """기존 품목 테이블의 필드 값을 갱신하고 DB에 반영"""
     # 갱신할 필드에 덮어쓰기
     db_item.name = item_update.name
@@ -43,3 +43,8 @@ def update(db: Session, db_item: models.Item, item_update: item_schema.ItemUpdat
     db.commit()
     db.refresh(db_item)
     return db_item
+
+def delete_item(db: Session, db_item: models.Item) -> None:
+    """기존 품목을 DB에서 삭제"""
+    db.delete(db_item)
+    db.commit()

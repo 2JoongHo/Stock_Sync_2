@@ -72,3 +72,17 @@ def item_update(
         db, db_item=db_item, item_update=_item_update
     )
     return updated_item
+
+@router.delete("/{item_id}",
+               status_code=status.HTTP_204_NO_CONTENT)
+def item_delete(item_id: int, db: Session = Depends(get_db)):
+    """지정한 ID의 품목 정보 삭제
+    없을 시 404 에러 반환"""
+    db_item = item_crud.get_item(db, item_id=item_id)
+    if not db_item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"삭제할 품목을 찾을 수 없습니다: {item_id}"
+        )
+    item_crud.delete_item(db=db, db_item=db_item)
+    return None
