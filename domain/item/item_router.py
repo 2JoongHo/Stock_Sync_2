@@ -52,3 +52,23 @@ def item_detail(item_id: int,
             detail=f"해당 ID의 품목을 찾을 수 없습니다: {item_id}"
         )
     return item
+
+@router.put("/{item.id}",
+            response_model=item_schema.Item)
+def item_update(
+    item_id: int,
+    _item_update: item_schema.ItemUpdate,
+    db: Session = Depends(get_db)
+):
+    """지정한 ID의 품목 정보 수정
+    없을 시 404 에러 반환"""
+    db_item = item_crud.get_item(db, item_id=item_id)
+    if not db_item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"수정할 품목을 찾을 수 없습니다: {item_id}"
+        )
+    updated_item = item_crud.update_item(
+        db, db_item=db_item, item_update=_item_update
+    )
+    return updated_item

@@ -30,3 +30,16 @@ def create_item(db: Session, item_create: item_schema.ItemCreate) -> models.Item
     db.commit()
     db.refresh(db_item)
     return db_item
+
+def update(db: Session, db_item: models.Item, item_update: item_schema.ItemUpdate) -> models.Item:
+    """기존 품목 테이블의 필드 값을 갱신하고 DB에 반영"""
+    # 갱신할 필드에 덮어쓰기
+    db_item.name = item_update.name
+    db_item.spec = item_update.spec
+    db_item.current_stock = item_update.current_stock
+    db_item.safety_stock = item_update.safety_stock
+    db_item.location = item_update.location
+
+    db.commit()
+    db.refresh(db_item)
+    return db_item
