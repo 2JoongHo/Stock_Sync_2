@@ -1,4 +1,4 @@
-"""SQLAlchemy 엔진 설정 및 DB 세션(get_db) 의존성 관리."""
+"""SQLAlchemy 엔진 설정 및 DB 세션(get_db) 의존성 관리"""
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base

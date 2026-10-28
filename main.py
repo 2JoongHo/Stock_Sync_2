@@ -1,4 +1,4 @@
-"""StockSync 애플리케이션 진입점 및 라우터 등록 모듈."""
+"""StockSync 애플리케이션 진입점 및 라우터 등록 모듈"""
 
 from fastapi import FastAPI
 from domain.item import item_router
