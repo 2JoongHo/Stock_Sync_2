@@ -19,3 +19,9 @@ class StockTransactionResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+class StockOutCreate(BaseModel):
+    """자재 출고 요청 (클라이언트 -> 서버)"""
+    item_id: int = Field(..., description="출고할 제품 ID")
+    quantity: int = Field(..., gt=0, description="출고 수량 (1개 이상)")
+    reference_note: str | None = Field(default=None, description="출고 비고")
