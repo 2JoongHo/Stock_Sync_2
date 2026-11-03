@@ -3,8 +3,10 @@
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+
 class Item(BaseModel):
     """품목 조회 및 응답용"""
+
     id: int
     item_code: str = Field(description="제품 코드")
     name: str = Field(description="제품명")
@@ -16,8 +18,10 @@ class Item(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class ItemCreate(BaseModel):
     """신규 품목 등록 요청용"""
+
     item_code: str = Field(description="제품 코드")
     name: str = Field(description="제품명")
     spec: str | None = Field(default=None, description="제품 사양")
@@ -32,8 +36,10 @@ class ItemCreate(BaseModel):
             raise ValueError("빈 문자열이거나 공백만 입력할 수 없습니다.")
         return v
 
+
 class ItemUpdate(BaseModel):
     """품목 수정"""
+
     name: str = Field(description="제품명")
     spec: str | None = Field(default=None, description="제품 사양")
     current_stock: int = Field(default=0, ge=0, description="현재 재고")

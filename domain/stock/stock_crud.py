@@ -6,16 +6,16 @@ from sqlalchemy.orm import Session
 import models
 from domain.stock.stock_schema import StockInCreate, StockOutCreate
 
+
 def process_stock_in(db: Session, stock_in: StockInCreate) -> models.StockTransaction:
     """자재 입고 처리"""
 
     # 대상 품목 조회
-    item = (
-        db.query(models.Item).filter(models.Item.id == stock_in.item_id).first())
+    item = db.query(models.Item).filter(models.Item.id == stock_in.item_id).first()
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"ID {stock_in.item_id}번 품목을 찾을 수 없습니다."
+            detail=f"ID {stock_in.item_id}번 품목을 찾을 수 없습니다.",
         )
 
     # 품목 현재고 증가
@@ -36,19 +36,18 @@ def process_stock_in(db: Session, stock_in: StockInCreate) -> models.StockTransa
 
     return tx
 
-def process_stock_out(db: Session, stock_out: StockOutCreate) -> models.StockTransaction:
+
+def process_stock_out(
+    db: Session, stock_out: StockOutCreate
+) -> models.StockTransaction:
     """자재 출고 처리"""
 
     # 대상 품목 조회
-    item = (
-        db.query(models.Item)
-        .filter(models.Item.id == stock_out.item_id)
-        .first()
-    )
+    item = db.query(models.Item).filter(models.Item.id == stock_out.item_id).first()
     if not item:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"ID {stock_out.item_id}번 품목을 찾을 수 없습니다."
+            detail=f"ID {stock_out.item_id}번 품목을 찾을 수 없습니다.",
         )
 
     # 재고 부족 검증
@@ -58,7 +57,7 @@ def process_stock_out(db: Session, stock_out: StockOutCreate) -> models.StockTra
             detail=(
                 f"재고가 부족합니다. (현재 재고: {item.current_stock}),"
                 f"요청 수량: {stock_out.quantity}개"
-            )
+            ),
         )
 
     # 현재 재고 차감
@@ -78,3 +77,24 @@ def process_stock_out(db: Session, stock_out: StockOutCreate) -> models.StockTra
     db.refresh(tx)
 
     return tx
+
+
+def get_stock_transaction(
+    db: Session,
+    item_id: int | None = None,
+    skip: int = 0,
+    limit: int = 50,
+) -> list[models.StockTransaction]:
+    """자재 입출고 이력 목록 조회"""
+    query = db.query(models.StockTransaction)
+
+    # 특정 품목 필터링 조건
+    if item_id is not None:
+        query = query.filter(models.StockTransaction.item_id == item_id)
+
+    return (
+        query.order_by(models.StockTransaction.created_at.desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
